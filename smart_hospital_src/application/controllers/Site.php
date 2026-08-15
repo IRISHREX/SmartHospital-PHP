@@ -154,7 +154,13 @@ class Site extends Public_Controller
                     $this->customlib->setUserLog($this->input->post('username'), $role_name);
 
                     if (isset($_SESSION['redirect_to'])) {
-                        redirect($_SESSION['redirect_to']);
+                        $redirect_to = $_SESSION['redirect_to'];
+                        unset($_SESSION['redirect_to']);
+                        if (strpos($redirect_to, 'login') === false && (filter_var($redirect_to, FILTER_VALIDATE_URL) || strpos($redirect_to, '/') === 0)) {
+                            redirect($redirect_to);
+                        } else {
+                            redirect('admin/admin/dashboard');
+                        }
                     } else {
                         redirect('admin/admin/dashboard');
                     }
