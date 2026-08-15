@@ -7,21 +7,9 @@ if (!defined('BASEPATH')) {
 class Referral_payment_model extends MY_Model
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-        try {
-            if (!$this->db->field_exists('status', 'referral_payment')) {
-                $this->db->query("ALTER TABLE `referral_payment` ADD `status` varchar(20) DEFAULT 'Paid'");
-            }
-        } catch (Throwable $e) {
-            log_message('error', 'Referral_payment_model: Could not add status column: ' . $e->getMessage());
-        }
-    }
-
     public function get_payment()
     {
-        $this->db->select("payment.date as date, payment.billing_id,payment.id, person.name, patients.patient_name,patients.id as patient_id, type.name as type, payment.bill_amount, payment.percentage, payment.amount,prefixes.prefix");
+        $this->db->select("payment.billing_id,payment.id, person.name, patients.patient_name,patients.id as patient_id, type.name as type, payment.bill_amount, payment.percentage, payment.amount,prefixes.prefix");
         $this->db->join("referral_type type", "type.id=payment.referral_type", "left");
         $this->db->join("prefixes", "type.prefixes_type=prefixes.type", "inner");
         $this->db->join("referral_person person", "person.id=payment.referral_person_id");
@@ -56,11 +44,6 @@ class Referral_payment_model extends MY_Model
         } else {            
             return $record_id;
         }        
-    }
-
-    public    function deleteByBillId($billing_id, $referral_type)
-    {
-        $this->db->where('billing_id', $billing_id)->where('referral_type', $referral_type)->delete('referral_payment');
     }
 
     public function delete($id)

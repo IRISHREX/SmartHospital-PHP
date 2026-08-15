@@ -33,7 +33,6 @@
                                             }
                                          ?>
                                         <th class="text-end"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th>
-                                        <th class="text-end"><?php echo $this->lang->line('refund') . " (" . $currency_symbol . ")"; ?></th>
                                         <th class="noExport text-end"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -91,10 +90,6 @@
                                     <div class="col-sm-6">
                                         <label class="form-label form-label-sm"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?> <small class="req">*</small></label>
                                         <input id="amount" name="amount" type="text" class="form-control form-control-sm" value="<?php echo set_value('amount'); ?>">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label class="form-label form-label-sm"><?php echo $this->lang->line('refund') . " (" . $currency_symbol . ")"; ?></label>
-                                        <input id="refund" name="refund" type="text" class="form-control form-control-sm" value="<?php echo set_value('refund'); ?>">
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="form-label form-label-sm"><?php echo $this->lang->line('attach_document'); ?></label>

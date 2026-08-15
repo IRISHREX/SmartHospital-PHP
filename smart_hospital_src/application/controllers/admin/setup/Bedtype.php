@@ -10,8 +10,6 @@ class Bedtype extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('bedtype_model');
-
         $this->load->library('form_validation');
     }
 

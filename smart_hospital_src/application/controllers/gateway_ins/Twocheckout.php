@@ -10,8 +10,6 @@ class Twocheckout extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('gateway_ins_model');
-
         $this->load->model(array('gateway_ins_model'));
     }
 

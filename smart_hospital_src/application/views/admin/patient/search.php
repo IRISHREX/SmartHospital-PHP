@@ -61,7 +61,6 @@ $genderList      = $this->customlib->getGender_Patient();
                                             <th><?php echo $this->lang->line('generated_by'); ?></th>
                                             <th><?php echo $this->lang->line('consultant'); ?></th>
                                             <th><?php echo $this->lang->line('reference'); ?></th>
-                                            <th>Referral Person Name</th>
                                             <th><?php echo $this->lang->line('symptoms'); ?></th>
 											<?php if ($this->rbac->hasPrivilege('opd_antenatal', 'can_view')) { ?>
                                             <th><?php echo $this->lang->line('is_antenatal'); ?></th>
@@ -348,20 +347,6 @@ $genderList      = $this->customlib->getGender_Patient();
                                                         <input class="form-control" type='text' name='refference' />
                                                     </div>
                                                     <span class="text-danger"><?php echo form_error('refference'); ?></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="mb-3">
-                                                    <label>Referral Person</label>
-                                                    <div>
-                                                        <select name='referral_person_id' id="referral_person_id" class="form-control select2">
-                                                            <option value=""><?php echo $this->lang->line('select'); ?></option>
-                                                            <?php foreach ($referral_person_list as $dkey => $dvalue) { ?>
-                                                                <option value="<?php echo $dvalue->person_id; ?>"><?php echo $dvalue->name . " (" . $dvalue->category_name . ")"; ?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
-                                                    <span class="text-danger"><?php echo form_error('referral_person_id'); ?></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">

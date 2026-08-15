@@ -11,7 +11,6 @@ class MY_Controller extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->database();
         $lang_array = array();
 		$this->load->library('Db_manager');
         $this->load->helper('lang');
@@ -354,8 +353,12 @@ class Parent_Controller extends MY_Controller
 
 class Front_Controller extends CI_Controller
 {
-    public $setting_model;
-    public $frontcms_setting_model;
+    protected $data           = array();
+    protected $school_details = array();
+    protected $parent_menu    = '';
+    protected $page_title     = '';
+    protected $theme_path     = '';
+    protected $front_setting  = '';
 
     public function __construct()
     {
@@ -367,11 +370,9 @@ class Front_Controller extends CI_Controller
             $this->db->reconnect();
         }
 
+        $this->school_details = $this->setting_model->getSetting();
         $this->load->model('frontcms_setting_model');
-        if (empty($this->frontcms_setting_model)) {
-            $this->load->model('Frontcms_setting_model', 'frontcms_setting_model');
-        }
-        $this->front_setting = ($this->frontcms_setting_model) ? $this->frontcms_setting_model->get() : (object)array('is_active_front_cms' => 0, 'is_active_online_appointment' => 0, 'theme' => 'default');
+        $this->front_setting = $this->frontcms_setting_model->get();
 		$front_cms_class  = $this->router->fetch_class();
         $front_cms_method = $this->router->fetch_method();
 
@@ -509,24 +510,6 @@ class Front_Controller extends CI_Controller
                 }
             }
         }
-    }
-
-    public function __get($key)
-    {
-        $CI = &get_instance();
-        if (isset($CI->$key)) {
-            return $CI->$key;
-        }
-
-        // Auto-load model dynamically on first access if property ends in _model
-        if (substr($key, -6) === '_model' || file_exists(APPPATH . 'models/' . ucfirst($key) . '.php')) {
-            $this->load->model($key);
-            if (isset($CI->$key)) {
-                return $CI->$key;
-            }
-        }
-
-        return null;
     }
 
 }

@@ -56,7 +56,6 @@ $genderList      = $this->customlib->getGender_Patient();
                     <th><?php echo $this->lang->line('fees')." (".$currency_symbol.")"; ?></th>
                     <th><?php echo $this->lang->line('discount')." (%)"; ?></th>
                     <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
-                    <th class="text-end noExport"><?php echo $this->lang->line('action'); ?></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -98,7 +97,6 @@ $genderList      = $this->customlib->getGender_Patient();
                     <th><?php echo $this->lang->line('fees')." (".$currency_symbol.")"; ?></th>
                     <th><?php echo $this->lang->line('discount')." (%)"; ?></th>
                     <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
-                    <th class="text-end noExport"><?php echo $this->lang->line('action'); ?></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -140,7 +138,6 @@ $genderList      = $this->customlib->getGender_Patient();
                     <th><?php echo $this->lang->line('fees')." (".$currency_symbol.")"; ?></th>
                     <th><?php echo $this->lang->line('discount')." (%)"; ?></th>
                     <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
-                    <th class="text-end noExport"><?php echo $this->lang->line('action'); ?></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -148,52 +145,7 @@ $genderList      = $this->customlib->getGender_Patient();
               </table>
             </div>
 			</div>  
-			</div>
-
-<style>
-.sh-action-dropdown {
-    position: relative;
-    display: inline-block;
-}
-.sh-action-dropdown .sh-action-btn {
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: #f8f9fa;
-    border: 1px solid #ced4da;
-    color: #495057;
-    font-weight: bold;
-    line-height: 1.2;
-    transition: all 0.2s ease;
-}
-.sh-action-dropdown .sh-action-btn:hover {
-    background: #e9ecef;
-    color: #212529;
-}
-.sh-action-dropdown .sh-action-btn::after {
-    display: none !important;
-}
-.sh-action-dropdown:hover .dropdown-menu {
-    display: block;
-    margin-top: 0;
-    right: 0;
-    left: auto;
-}
-.sh-action-dropdown .dropdown-menu {
-    z-index: 1060 !important;
-    min-width: 140px;
-}
-.sh-action-dropdown .dropdown-item {
-    font-size: 0.85rem;
-    padding: 6px 14px;
-    color: #333;
-    display: flex;
-    align-items: center;
-}
-.sh-action-dropdown .dropdown-item:hover {
-    background-color: #f1f5f9;
-    color: #0d6efd;
-}
-</style> 
+			</div> 
 			
           </div>
         </div>
@@ -1490,4 +1442,3 @@ function delete_record(id) {
 
 <!-- //========datatable end===== -->
 <?php $this->load->view('admin/patient/patientaddmodal') ?>
-<?php $this->load->view('admin/appointment/_appointment_refund') ?>

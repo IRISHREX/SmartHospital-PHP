@@ -23,8 +23,7 @@ class Module_lib {
         if (!isset($this->CI->module_model)) {
             $this->CI->load->model('Module_model');
         }
-        $model = isset($this->CI->module_model) ? $this->CI->module_model : new Module_model();
-        $this->allModules = $model->get();
+        $this->allModules = $this->CI->module_model->get();
 
         if (!empty($this->allModules)) {
             foreach ($this->allModules as $mod_key => $mod_value) {
@@ -43,8 +42,7 @@ class Module_lib {
         if (!isset($this->CI->module_model)) {
             $this->CI->load->model('Module_model');
         }
-        $model = isset($this->CI->module_model) ? $this->CI->module_model : new Module_model();
-        $this->allPatientModules = $model->getPatientModule();
+        $this->allPatientModules = $this->CI->module_model->getPatientModule();
 
         if (!empty($this->allPatientModules)) {
             foreach ($this->allPatientModules as $mod_key => $mod_value) {
@@ -76,8 +74,8 @@ class Module_lib {
     }
 
 	function hasModule($module_shortcode) {
-        $model = (isset($this->CI->module_model) && $this->CI->module_model) ? $this->CI->module_model : new Module_model();
-        $count = $model->hasModule($module_shortcode);
+
+        $count = $this->CI->module_model->hasModule($module_shortcode);
 
         if ($count > 0) {
             return true;

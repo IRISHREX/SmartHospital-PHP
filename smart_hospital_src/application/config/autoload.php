@@ -59,7 +59,7 @@ $autoload['packages'] = array();
   |
   |	$autoload['libraries'] = array('user_agent' => 'ua');
  */
-$autoload['libraries'] = array('database', 'email', 'session', 'form_validation', 'customlib', 'media_storage', 'rbac', 'role', 'enc_lib', 'mailer', 'mailgateway', 'module_lib', 'captchalib');
+$autoload['libraries'] = array('session', 'form_validation');
 
 /*
   | -------------------------------------------------------------------
@@ -84,7 +84,7 @@ $autoload['drivers'] = array();
   |
   |	$autoload['helper'] = array('url', 'file');
  */
-$autoload['helper'] = array('url', 'file', 'menu', 'security', 'cookie', 'language', 'custom', 'theme');
+$autoload['helper'] = array('url', 'file', 'menu', 'security', 'cookie');
 
 /*
   | -------------------------------------------------------------------
@@ -127,15 +127,4 @@ $autoload['language'] = array();
   |
   |	$autoload['model'] = array('first_model' => 'first');
  */
-$autoload['model'] = array(
-    'setting_model', 'frontcms_setting_model', 'staff_model', 'staffroles_model', 'rolepermission_model', 
-    'language_model', 'userlog_model', 'role_model', 'notification_model', 'notificationsetting_model', 
-    'customfield_model', 'systemnotification_model', 'expense_model', 'income_model', 'patient_model', 
-    'appointment_model', 'organisation_model', 'bloodbankstatus_model', 'pharmacy_model', 'pathology_model', 
-    'radio_model', 'ambulance_model', 'charge_model', 'tpa_model', 'transaction_model', 'audit_model',
-    'visitors_purpose_model', 'visitors_model', 'vehicle_model', 'medicine_category_model', 'blooddonor_model', 
-    'bloodissue_model', 'chargetype_model', 'complaint_model', 'complainttype_model', 'dispatch_model', 
-    'general_call_model', 'bed_model', 'bedgroup_model', 'bedtype_model', 'floor_model', 'department_model', 
-    'designation_model', 'finding_model', 'symptoms_model', 'unittype_model', 'prescription_model', 
-    'consultcharge_model', 'item_model', 'itemcategory_model', 'itemstock_model', 'itemstore_model', 'itemsupplier_model'
-);
+$autoload['model'] = array();

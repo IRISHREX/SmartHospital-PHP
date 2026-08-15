@@ -61,9 +61,7 @@ $genderList      = $this->customlib->getGender_Patient();
                       <th><?php echo $this->lang->line('status'); ?></th>
                       <th><?php echo $this->lang->line('fees')." (".$currency_symbol.")"; ?></th>
                     <th><?php echo $this->lang->line('discount')." (%)"; ?></th>
-                    <th><?php echo $this->lang->line('net_amount')." (".$currency_symbol.")"; ?></th>
-                      <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
-                    <th class="text-end noExport"><?php echo $this->lang->line('action'); ?></th>
+                    <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -103,9 +101,7 @@ $genderList      = $this->customlib->getGender_Patient();
                       <th><?php echo $this->lang->line('status'); ?></th>
                       <th><?php echo $this->lang->line('fees')." (".$currency_symbol.")"; ?></th>
                       <th><?php echo $this->lang->line('discount')." (%)"; ?></th>
-                      <th><?php echo $this->lang->line('net_amount')." (".$currency_symbol.")"; ?></th>
                       <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
-                      <th class="text-end noExport"><?php echo $this->lang->line('action'); ?></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -145,9 +141,7 @@ $genderList      = $this->customlib->getGender_Patient();
                       <th><?php echo $this->lang->line('status'); ?></th>
                       <th><?php echo $this->lang->line('fees')." (".$currency_symbol.")"; ?></th>
                       <th><?php echo $this->lang->line('discount')." (%)"; ?></th>
-                      <th><?php echo $this->lang->line('net_amount')." (".$currency_symbol.")"; ?></th>
                       <th><?php echo $this->lang->line('paid')." (".$currency_symbol.")"; ?></th>
-                      <th class="text-end noExport"><?php echo $this->lang->line('action'); ?></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -159,51 +153,6 @@ $genderList      = $this->customlib->getGender_Patient();
 
         </div>
       </div>
-      
-<style>
-.sh-action-dropdown {
-    position: relative;
-    display: inline-block;
-}
-.sh-action-dropdown .sh-action-btn {
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: #f8f9fa;
-    border: 1px solid #ced4da;
-    color: #495057;
-    font-weight: bold;
-    line-height: 1.2;
-    transition: all 0.2s ease;
-}
-.sh-action-dropdown .sh-action-btn:hover {
-    background: #e9ecef;
-    color: #212529;
-}
-.sh-action-dropdown .sh-action-btn::after {
-    display: none !important;
-}
-.sh-action-dropdown:hover .dropdown-menu {
-    display: block;
-    margin-top: 0;
-    right: 0;
-    left: auto;
-}
-.sh-action-dropdown .dropdown-menu {
-    z-index: 1060 !important;
-    min-width: 140px;
-}
-.sh-action-dropdown .dropdown-item {
-    font-size: 0.85rem;
-    padding: 6px 14px;
-    color: #333;
-    display: flex;
-    align-items: center;
-}
-.sh-action-dropdown .dropdown-item:hover {
-    background-color: #f1f5f9;
-    color: #0d6efd;
-}
-</style>
   </div>
 </div>
 
@@ -245,7 +194,7 @@ $genderList      = $this->customlib->getGender_Patient();
                 </div>
                 <div class="col-sm-3">
                   <label class="form-label"><?php echo $this->lang->line("doctor_fees"); ?> (<?php echo $currency_symbol; ?>)</label><small class="req"> *</small>
-                  <input type="text" name="amount" id="doctor_fees" class="form-control form-control-sm">
+                  <input type="text" name="amount" id="doctor_fees" class="form-control form-control-sm" readonly="readonly">
                   <span class="text-danger"><?php echo form_error('doctor_fees'); ?></span>
                 </div>
                 <div class="col-sm-3">
@@ -279,10 +228,9 @@ $genderList      = $this->customlib->getGender_Patient();
                   <label class="form-label"><?php echo $this->lang->line('status'); ?><small class="req"> *</small></label>
                   <select name="appointment_status" class="form-control form-control-sm" id="appointment_status">
                     <option value=""><?php echo $this->lang->line('select'); ?></option>
-                    <?php foreach ($appointment_status as $appointment_status_key => $appointment_status_value) { 
-                      if (in_array($appointment_status_key, ['pending', 'approved'])) { ?>
+                    <?php foreach ($appointment_status as $appointment_status_key => $appointment_status_value) { ?>
                     <option value="<?php echo $appointment_status_key ?>"><?php echo $appointment_status_value ?></option>
-                    <?php } } ?>
+                    <?php } ?>
                   </select>
                 </div>
                 <div class="col-sm-3">
@@ -377,7 +325,7 @@ $genderList      = $this->customlib->getGender_Patient();
                 </div>
                 <div class="col-sm-3">
                   <label class="form-label"><?php echo $this->lang->line("doctor_fees") . ' (' . $currency_symbol . ')'; ?></label><small class="req"> *</small>
-                  <input type="text" name="doctor_fees" id="rdoctor_fees_edit" class="form-control form-control-sm">
+                  <input type="text" name="doctor_fees" id="rdoctor_fees_edit" class="form-control form-control-sm" readonly="readonly">
                   <span class="text-danger"><?php echo form_error('doctor_fees'); ?></span>
                 </div>
                 <div class="col-sm-3">
@@ -1393,42 +1341,15 @@ $("#appointment_status").change(function(){
  
 <script>
 $(document).ready(function () {
-    /* initialize all tooltips after Bootstrap JS is loaded */
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if(window.SHPicker) {
-        SHPicker.setRestriction('#datetimepicker', { minDate: today });
-        SHPicker.setRestriction('#rdates', { minDate: today });
-    }
-
-    $(document).on('change', '.payment_mode', function() {
-        if ($(this).val() === 'Pay Later') {
-            $('#appointment_status').val('pending').prop('disabled', true);
-            if ($('#appointment_status_hidden').length === 0) {
-                $('<input>').attr({
-                    type: 'hidden',
-                    id: 'appointment_status_hidden',
-                    name: 'appointment_status',
-                    value: 'pending'
-                }).insertAfter('#appointment_status');
-            } else {
-                $('#appointment_status_hidden').val('pending');
-            }
-        } else {
-            $('#appointment_status').prop('disabled', false);
-            $('#appointment_status_hidden').remove();
-        }
-    });
+  /* initialize all tooltips after Bootstrap JS is loaded */
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 });
 </script>
 <!-- //========datatable end===== -->
 <?php $this->load->view('admin/patient/patientaddmodal') ?>
-<?php $this->load->view('admin/appointment/_appointment_refund') ?>
 
 <?php if ($this->input->get('action') === 'add'): ?>
 <script>$(function(){ shModal('myModal').show(); shCleanUrlParam('action'); });</script>

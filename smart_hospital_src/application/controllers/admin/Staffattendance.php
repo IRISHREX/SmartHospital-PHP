@@ -14,8 +14,6 @@ class Staffattendance extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('setting_model');
-
         $this->load->helper('file');
         $this->config->load("mailsms");
         $this->config->load("payroll");

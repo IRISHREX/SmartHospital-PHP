@@ -10,8 +10,6 @@ class Biometric extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('staffattendancemodel');
-
 
         $this->load->helper('json_output');
         $this->load->model('setting_model');      

@@ -9,23 +9,11 @@ class Site extends Public_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('appointment_model');
-        $this->load->model('cms_program_model');
-        $this->load->model('language_model');
-        $this->load->model('onlineappointment_model');
-        $this->load->model('patient_model');
-        $this->load->model('prefix_model');
-        $this->load->model('setting_model');
-        $this->load->model('sharecontent_model');
-        $this->load->model('staff_model');
-        $this->load->model('uploadcontent_model');
-        $this->load->model('user_model');
-
         $this->check_installation();
         if ($this->config->item('installed') == true) {
             $this->db->reconnect();
         }
-        $this->load->model(array('onlineappointment_model', 'prefix_model', 'cms_program_model', 'staff_model', 'language_model', 'userlog_model', 'role_model'));
+        $this->load->model(array('onlineappointment_model', 'prefix_model'));
         $this->load->library('Auth');
         $this->load->library('Enc_lib');
         $this->load->library('mailer');
@@ -57,7 +45,7 @@ class Site extends Public_Controller
             $this->auth->is_logged_in(true);
         }
 		
-		if (!empty($this->module_lib) && $this->module_lib->hasModule('google_authenticator') 
+		if ($this->module_lib->hasModule('google_authenticator') 
             && $this->module_lib->hasActive('google_authenticator')) {
 
             redirect('gauthenticate/login');

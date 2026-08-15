@@ -10,8 +10,6 @@ class Referralpayment extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('notificationsetting_model');
-
         $this->load->model("referral_payment_model");
         $this->load->model("referral_person_model");
         $this->load->library("form_validation");
@@ -55,8 +53,7 @@ class Referralpayment extends Admin_Controller
                 "bill_amount"        => $this->input->post("bill_amount", TRUE),
                 "percentage"         => $this->input->post("percentage", TRUE),
                 "amount"             => $this->input->post("commission_amount", TRUE),
-                "status"             => $this->input->post("status", TRUE) ? $this->input->post("status", TRUE) : 'Paid',
-                "entry_date"         => $this->input->post("entry_date", TRUE) ? $this->customlib->dateFormatToYYYYMMDDHis($this->input->post("entry_date", TRUE), $this->customlib->getHospitalTimeFormat()) : date("Y-m-d H:i:s"),
+                "date"               => date("Y-m-d H:i:s"),
             );
 
             $this->referral_payment_model->add($payment);
@@ -125,8 +122,6 @@ class Referralpayment extends Admin_Controller
                 "id"         => $this->input->post('paymentid', TRUE),
                 "percentage" => $this->input->post('commission_percentage', TRUE),
                 "amount"     => $this->input->post('commission_amount', TRUE),
-                "status"     => $this->input->post('edit_status', TRUE) ? $this->input->post('edit_status', TRUE) : 'Paid',
-                "entry_date" => $this->input->post('edit_entry_date', TRUE) ? $this->customlib->dateFormatToYYYYMMDDHis($this->input->post('edit_entry_date', TRUE), $this->customlib->getHospitalTimeFormat()) : date("Y-m-d H:i:s"),
             );
 
             $this->referral_payment_model->update($payment);

@@ -25,46 +25,6 @@ class patient extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('antenatal_model');
-        $this->load->model('casereference_model');
-        $this->load->model('conference_model');
-        $this->load->model('notificationsetting_model');
-        $this->load->model('patient_model');
-        $this->load->model('referral_payment_model');
-        $this->load->model('referral_person_model');
-        $this->load->model('transaction_model');
-        $this->load->model('vital_model');
-
-        $this->load->model('bloodbankstatus_model');
-        $this->load->model('setting_model');
-        $this->load->model('customfield_model');
-        $this->load->model('staff_model');
-        $this->load->model('appointment_model');
-        $this->load->model('charge_model');
-        $this->load->model('symptoms_model');
-        $this->load->model('user_model');
-        $this->load->model('charge_category_model');
-        $this->load->model('medicine_category_model');
-        $this->load->model('medicine_dosage_model');
-        $this->load->model('pharmacy_model');
-        $this->load->model('organisation_model');
-        $this->load->model('bedgroup_model');
-        $this->load->model('payment_model');
-        $this->load->model('bed_model');
-        $this->load->model('floor_model');
-        $this->load->model('pathology_model');
-        $this->load->model('radio_model');
-        $this->load->model('chargetype_model');
-        $this->load->model('operationtheatre_model');
-        $this->load->model('timeline_model');
-        $this->load->model('role_model');
-        $this->load->model('bloodissue_model');
-        $this->load->model('ambulance_model');
-        $this->load->model('prescription_model');
-        $this->load->model('printing_model');
-        $this->load->model('report_model');
-        $this->load->model('vehicle_model');
-
         $this->config->load("payroll");
         $this->config->load("image_valid");
         $this->config->load("mailsms");
@@ -84,7 +44,7 @@ class patient extends Admin_Controller
         $this->yesno_condition = $this->config->item('yesno_condition');
         $this->search_type     = $this->config->item('search_type');
         $this->blood_group     = $this->config->item('bloodgroup');
-        $this->load->model(array('conference_model', 'transaction_model', 'casereference_model', 'patient_model', 'notificationsetting_model','antenatal_model','vital_model', 'referral_person_model', 'referral_payment_model'));
+        $this->load->model(array('conference_model', 'transaction_model', 'casereference_model', 'patient_model', 'notificationsetting_model','antenatal_model','vital_model'));
         $this->load->model('finding_model');
         $this->charge_type          = $this->customlib->getChargeMaster();
         $data["charge_type"]        = $this->charge_type;
@@ -335,26 +295,6 @@ class patient extends Admin_Controller
             // revisit create path (add_revisit) increments too. The OPD->IPD move (moveopd)
             // now increments no_of_ipd on its side.
             if ($opdn_id) {
-                
-                $referral_person_id = $this->input->post('referral_person_id', TRUE);
-                if (!empty($referral_person_id)) {
-                    $percentage = $this->referral_payment_model->get_commission($referral_person_id, 1); // 1 = opd
-                    if ($percentage) {
-                        $commission_amount = ($this->input->post('amount', TRUE) * $percentage) / 100;
-                        $payment = array(
-                            "referral_person_id" => $referral_person_id,
-                            "patient_id"         => $patient_id,
-                            "referral_type"      => 1,
-                            "billing_id"         => $opdn_id,
-                            "bill_amount"        => $this->input->post('amount', TRUE),
-                            "percentage"         => $percentage,
-                            "amount"             => $commission_amount,
-                            "date"               => date("Y-m-d H:i:s"),
-                        );
-                        $this->referral_payment_model->add($payment);
-                    }
-                }
-
                 try {
                     $this->saasvalidation->updateResouceQuota('no_of_opd', 1);
                 } catch (Exception $e) {
@@ -907,26 +847,6 @@ class patient extends Admin_Controller
             // like any new OPD. Own try/catch so a quota-API hiccup does not abort the
             // already-created OPD's flow (updateResouceQuota throws on failure).
             if ($opdn_id) {
-                
-                $referral_person_id = $this->input->post('referral_person_id', TRUE);
-                if (!empty($referral_person_id)) {
-                    $percentage = $this->referral_payment_model->get_commission($referral_person_id, 1); // 1 = opd
-                    if ($percentage) {
-                        $commission_amount = ($this->input->post('amount', TRUE) * $percentage) / 100;
-                        $payment = array(
-                            "referral_person_id" => $referral_person_id,
-                            "patient_id"         => $patient_id,
-                            "referral_type"      => 1,
-                            "billing_id"         => $opdn_id,
-                            "bill_amount"        => $this->input->post('amount', TRUE),
-                            "percentage"         => $percentage,
-                            "amount"             => $commission_amount,
-                            "date"               => date("Y-m-d H:i:s"),
-                        );
-                        $this->referral_payment_model->add($payment);
-                    }
-                }
-
                 try {
                     $this->saasvalidation->updateResouceQuota('no_of_opd', 1);
                 } catch (Exception $e) {
@@ -1621,7 +1541,6 @@ This Function is used to Import Multiple Patient Records
         $this->load->model('icd10_model');
         $data['icd10_groups']   = $this->icd10_model->getgroup();
         $data['icd10_codes']    = $this->icd10_model->get();
-        $data["referral_person_list"] = $this->referral_person_model->get_person();
         $data['module'] = 'opd';
         $this->load->view('layout/header', $data);
         $this->load->view('admin/patient/search', $data);
@@ -1744,7 +1663,6 @@ This Function is used to Import Multiple Patient Records
                 $row[] = composeStaffNameByString($value->generated_byname, $value->generated_bysurname, $value->generated_byemployee_id);
                 $row[] = composeStaffNameByString($value->name, $value->surname, $value->employee_id);
                 $row[] = $value->refference;
-                $row[] = $value->referral_person_name ? $value->referral_person_name : "";
                 $row[] = $symptoms;
 				if ($this->rbac->hasPrivilege('opd_antenatal', 'can_view')) { 
                 $row[] = $is_antenatal;
@@ -2329,7 +2247,6 @@ This Function is used to Import Multiple Patient Records
         $setting                = $this->setting_model->get();
         $data['setting']        = $setting;
         $data['organisation']   = $this->organisation_model->get();
-        $data["referral_person_list"] = $this->referral_person_model->get_person();
 
         $data['module'] = 'ipd';
         $this->load->view('layout/header', $data);
@@ -2691,7 +2608,6 @@ This Function is used to Import Multiple Patient Records
             $data['pathology']          = $pathology;
             $radiology                  = $this->radio_model->getradiologytest();
             $data['radiology']          = $radiology;            
-            $data['referral_person_list'] = $this->referral_person_model->get_person();
             $medicationreport           = $this->patient_model->getmedicationdetailsbydateopd($opdid);
             $max_dose                   = $this->patient_model->getMaxByopdid($opdid);
             $data['max_dose']           = $max_dose->max_dose;
@@ -3171,7 +3087,6 @@ This Function is used to Import Multiple Patient Records
         $data["nurse_select"]   = $nurseid;
         $data["disable_option"] = $disable_option;
         $data['roles']          = $this->role_model->get();
-        $data['referral_person_list'] = $this->referral_person_model->get_person();
         $result                 = array();
         $diagnosis_details      = array();
         $opd_details            = array();
@@ -3973,18 +3888,14 @@ This Function is used to Import Multiple Patient Records
         $file_exists  = FCPATH . "uploads/patient_id_card/barcodes/$id.png";
         $file_exists2 = FCPATH . "uploads/patient_id_card/qrcode/$id.png";
 
-        if (!file_exists($file_exists) || !file_exists($file_exists2)) {
-            $this->customlib->generatebarcode($id);
-        }
-
-        if (file_exists($file_exists)) {
+        if(file_exists($file_exists)){
             $result['getbarcode'] = base_url("uploads/patient_id_card/barcodes/$id.png") . img_time();
-        } else {
+        }else{
             $result['getbarcode'] = null;
         }
-        if (file_exists($file_exists2)) {
+        if(file_exists($file_exists2)){
             $result['getqrcode'] = base_url("uploads/patient_id_card/qrcode/$id.png") . img_time();
-        } else {
+        }else{
             $result['getqrcode'] = null;
         }       
         
@@ -4037,22 +3948,18 @@ This Function is used to Import Multiple Patient Records
         $cutom_fields_data             = get_custom_table_values($id, 'patient');
         $result['field_data']          = $cutom_fields_data;
 
-        $path1 = $this->customlib->getFolderPath()."./uploads/patient_id_card/barcodes/$id.png";
-        $path2 = $this->customlib->getFolderPath()."./uploads/patient_id_card/qrcode/$id.png";
+        $path1= $this->customlib->getFolderPath()."./uploads/patient_id_card/barcodes/$id.png";
+        $path2= $this->customlib->getFolderPath()."./uploads/patient_id_card/qrcode/$id.png";
 
-        if (!file_exists($path1) || !file_exists($path2)) {
-            $this->customlib->generatebarcode($id);
+        if(file_exists("$path1")){
+            $getbarcode=$this->media_storage->getImageURL("./uploads/patient_id_card/barcodes/$id.png");
+        }else{
+            $getbarcode=null;
         }
-
-        if (file_exists($path1)) {
-            $getbarcode = $this->media_storage->getImageURL("./uploads/patient_id_card/barcodes/$id.png");
-        } else {
-            $getbarcode = null;
-        }
-        if (file_exists($path2)) {
-            $getqrcode = $this->media_storage->getImageURL("./uploads/patient_id_card/qrcode/$id.png");
-        } else {
-            $getqrcode = null;
+        if(file_exists("$path2")){
+            $getqrcode=$this->media_storage->getImageURL("./uploads/patient_id_card/qrcode/$id.png");
+        }else{
+            $getqrcode=null;
         }
         if(!empty($result['image'])){        
             $result['image']          = $this->media_storage->getImageURL($result['image']);

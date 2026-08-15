@@ -10,7 +10,6 @@ class Incomehead extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model("incomehead_model");
         $this->load->helper('url');
     }
 

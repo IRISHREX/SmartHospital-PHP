@@ -98,10 +98,11 @@ class Transaction_model extends MY_Model
 
     public function pathologyTotalPayments($pathology_billing_id)
     {
-        $query = $this->db->select('IFNULL((select sum(amount) as amount_paid from transactions WHERE transactions.pathology_billing_id =pathology_billing.id and transactions.type="payment" ),0) as total_paid, IFNULL((select sum(amount) as refund from transactions WHERE transactions.pathology_billing_id =pathology_billing.id and transactions.type="refund" ),0) as refund_amount, pathology_billing.*')                 
+        $query = $this->db->select('sum(amount) as total_paid, pathology_billing.*')
+            ->join("transactions", "pathology_billing.id = transactions.pathology_billing_id","left")
             ->join("patients", "patients.id = pathology_billing.patient_id")
-            ->where("pathology_billing.id", $pathology_billing_id)           
-            ->get("pathology_billing");
+            ->where("pathology_billing.id", $pathology_billing_id)
+            ->get("pathology_billing ");
         return $query->row();
     }  
 
@@ -137,19 +138,12 @@ class Transaction_model extends MY_Model
 
     public function radiologyTotalPayments($radiology_billing_id)
     {
-        $query = $this->db->select('IFNULL((select sum(amount) as amount_paid from transactions WHERE transactions.radiology_billing_id =radiology_billing.id and transactions.type="payment" ),0) as total_paid, IFNULL((select sum(amount) as refund from transactions WHERE transactions.radiology_billing_id =radiology_billing.id and transactions.type="refund" ),0) as refund_amount, radiology_billing.*')                 
+        $query = $this->db->select('IFNULL(sum(amount),0) as total_paid, radiology_billing.*')
+            ->join("transactions", "radiology_billing.id = transactions.radiology_billing_id",'LEFT')
             ->join("patients", "patients.id = radiology_billing.patient_id")
-            ->where("radiology_billing.id", $radiology_billing_id)           
-            ->get("radiology_billing");
-        return $query->row();
-    }
-
-    public function appointmentTotalPayments($appointment_id)
-    {
-        $query = $this->db->select('IFNULL((select sum(amount) from transactions WHERE transactions.appointment_id = appointment.id and transactions.type="payment"), IFNULL(appointment_payment.paid_amount,0)) as total_paid, IFNULL((select sum(amount) from transactions WHERE transactions.appointment_id = appointment.id and transactions.type="refund"), 0) as refund_amount, appointment.*, appointment_payment.paid_amount as initial_paid, appointment_payment.standard_amount')
-            ->join("appointment_payment", "appointment_payment.appointment_id = appointment.id", "left")
-            ->where("appointment.id", $appointment_id)
-            ->get("appointment");
+            ->where("radiology_billing.id", $radiology_billing_id)
+            ->order_by("transactions.payment_date", "desc")
+            ->get("radiology_billing ");
         return $query->row();
     }
 
@@ -276,22 +270,6 @@ class Transaction_model extends MY_Model
         $query  = $this->db->query($sql);
         $result = $query->row();
         return $result;
-    }
-
-    public function getTotalRefundAmountByRadiologyBillId($radiology_billing_id)
-    {
-        $sql = "SELECT sum(amount) as payment_amount FROM `transactions` WHERE radiology_billing_id =".$this->db->escape_str($radiology_billing_id)." and type='refund'";
-        $query  = $this->db->query($sql);
-        $result = $query->row();
-        return $result ? $result->payment_amount : 0;
-    }
-
-    public function getTotalRefundAmountByPathologyBillId($pathology_billing_id)
-    {
-        $sql = "SELECT sum(amount) as payment_amount FROM `transactions` WHERE pathology_billing_id =".$this->db->escape_str($pathology_billing_id)." and type='refund'";
-        $query  = $this->db->query($sql);
-        $result = $query->row();
-        return $result ? $result->payment_amount : 0;
     }
 
     public function getAlltransactionRecord()

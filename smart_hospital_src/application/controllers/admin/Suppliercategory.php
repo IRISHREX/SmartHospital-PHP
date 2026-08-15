@@ -6,11 +6,6 @@ if (!defined('BASEPATH')) {
 
 class Suppliercategory extends Admin_Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->load->model('itemsupplier_model');
-    }
     public function supplier()
     {
         if (!$this->rbac->hasPrivilege('supplier', 'can_view')) {

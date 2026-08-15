@@ -11,8 +11,6 @@ class Department extends Admin_Controller
     {
 
         parent::__construct();
-        $this->load->model('department_model');
-
         $this->load->library('datatables');
         $this->load->helper('file');
         $this->config->load("payroll");

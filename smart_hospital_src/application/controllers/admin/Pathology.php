@@ -19,25 +19,6 @@ class Pathology extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('prefix_model');
-        $this->load->model('referral_payment_model');
-        $this->load->model('referral_person_model');
-        $this->load->model('transaction_model');
-
-        $this->load->model('pathology_category_model');
-        $this->load->model('staff_model');
-        $this->load->model('patient_model');
-        $this->load->model('customfield_model');
-        $this->load->model('charge_category_model');
-        $this->load->model('pathology_model');
-        $this->load->model('notificationsetting_model');
-        $this->load->model('user_model');
-        $this->load->model('prescription_model');
-        $this->load->model('bloodbankstatus_model');
-        $this->load->model('organisation_model');
-        $this->load->model('pharmacy_model');
-        $this->load->model('printing_model');
-
         $this->config->load("payroll");
         $this->load->library('Enc_lib');
         $this->load->library('mailsmsconf');
@@ -53,7 +34,7 @@ class Pathology extends Admin_Controller
         $this->payment_mode         = $this->config->item('payment_mode');
         $data["charge_type"]        = $this->charge_type;
         $this->patient_login_prefix = "pat";
-        $this->load->model(array('prefix_model', 'transaction_model', 'referral_person_model', 'referral_payment_model'));
+        $this->load->model(array('prefix_model', 'transaction_model'));
         $this->load->helper('customfield_helper');
         $this->load->helper('custom');
         $this->time_format = $this->customlib->getHospitalTimeFormat();
@@ -80,7 +61,6 @@ class Pathology extends Admin_Controller
         $data["title"]    = $this->lang->line('pathology');
         $doctors          = $this->staff_model->getStaffbyrole(3);
         $data["doctors"]  = $doctors;
-        $data["referral_person_list"] = $this->referral_person_model->get_person();
         $patients         = $this->patient_model->getPatientListall();
         $data["patients"] = $patients;
         $data['fields']   = $this->customfield_model->get_custom_fields('pathologytest', 1);
@@ -466,11 +446,6 @@ class Pathology extends Admin_Controller
                 $organisation_id = null;
             }
 
-            $status = $this->input->post('status', TRUE);
-            if (empty($status)) {
-                $status = NULL;
-            }
-
             $data = array(
                 'date'                      => $bill_date,
                 'patient_id'                => $patient_id,
@@ -488,7 +463,6 @@ class Pathology extends Admin_Controller
                 'organisation_id'           => $organisation_id,
                 'insurance_validity'        => $insurance_validity,
                 'insurance_id'              => $insurance_id,
-                'status'                    => $status,
             );
 
             $custom_field_post  = $this->input->post("custom_fields[pathology]", TRUE);
@@ -620,28 +594,6 @@ class Pathology extends Admin_Controller
             }
 
             if ($inserted) {
-                $referral_person_id = $this->input->post('referral_person_id', TRUE);
-                if (!empty($referral_person_id)) {
-                    if ($pathology_billing_id > 0) {
-                        $this->referral_payment_model->deleteByBillId($inserted, 4);
-                    }
-                    $percentage = $this->referral_payment_model->get_commission($referral_person_id, 4); // 4 = pathology
-                    if ($percentage) {
-                        $commission_amount = ($this->input->post('net_amount', TRUE) * $percentage) / 100;
-                        $payment = array(
-                            "referral_person_id" => $referral_person_id,
-                            "patient_id"         => $patient_id,
-                            "referral_type"      => 4,
-                            "billing_id"         => $inserted,
-                            "bill_amount"        => $this->input->post('net_amount', TRUE),
-                            "percentage"         => $percentage,
-                            "amount"             => $commission_amount,
-                            "date"               => date("Y-m-d H:i:s"),
-                        );
-                        $this->referral_payment_model->add($payment);
-                    }
-                }
-
                 $patientlist = $this->notificationsetting_model->getpatientDetails($patient_id);
 
                 $event_data = array(
@@ -1489,8 +1441,6 @@ class Pathology extends Admin_Controller
                 $row[] = $value->patient_name . " (" . $value->pid . ")";
                 $row[] = composeStaffNameByString($value->generated_byname, $value->generated_bysurname, $value->generated_byemployee_id);
                 $row[] = composeStaffNameByString($value->name, $value->surname, $value->employee_id);
-                $row[] = $value->referral_person_name ? $value->referral_person_name : "";
-                $row[] = $value->status ? $value->status : "";
 
                 //====================
                 if (!empty($fields)) {
@@ -1698,7 +1648,6 @@ class Pathology extends Admin_Controller
         $data["patients"]     = $patients;
         $doctors              = $this->staff_model->getStaffbyrole(3);
         $data["doctors"]      = $doctors;
-        $data["referral_person_list"] = $this->referral_person_model->get_person();
         $data["payment_mode"] = $this->payment_mode;
         $page                 = $this->load->view("admin/pathology/_assigntestpatho", $data, true);
         $result               = $this->pathology_model->getBillNo();
@@ -1725,7 +1674,6 @@ class Pathology extends Admin_Controller
         $doctors                     = $this->staff_model->getStaffbyrole(3);
         $data['custom_fields_value'] = display_custom_fields('pathology', $id);
         $data["doctors"]             = $doctors;
-        $data["referral_person_list"] = $this->referral_person_model->get_person();
         $data["payment_mode"]        = $this->payment_mode;               
         $page                        = $this->load->view("admin/pathology/_editpathology", $data, true);        
         $total_rows                  = count($pathology_data->pathology_report);
@@ -2576,62 +2524,4 @@ class Pathology extends Admin_Controller
         echo json_encode($json_data);
     }	
 
-    public function partial_refund()
-    {
-        if (!$this->rbac->hasPrivilege('pathology_partial_payment', 'can_add')) {
-            access_denied();
-        }
-
-        $this->form_validation->set_rules('payment_date', $this->lang->line('date'), 'required|xss_clean');
-        $this->form_validation->set_rules('amount', $this->lang->line('amount'), 'required|valid_amount|xss_clean');
-        $this->form_validation->set_rules('payment_mode', $this->lang->line('payment_mode'), 'required|xss_clean');
-
-        if ($this->form_validation->run() == false) {
-            $msg = array(
-                'payment_date' => form_error('payment_date'),
-                'amount'       => form_error('amount'),
-                'payment_mode' => form_error('payment_mode'),
-            );
-            $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
-        } else {
-            $pathology_billing_id     = $this->input->post('pathology_billing_id', TRUE);
-            $pathology_billing_detail = $this->transaction_model->pathologyTotalPayments($pathology_billing_id);
-            
-            $total_paid = ($pathology_billing_detail && isset($pathology_billing_detail->total_paid)) ? $pathology_billing_detail->total_paid : 0;
-            $total_refund = $this->transaction_model->getTotalRefundAmountByPathologyBillId($pathology_billing_id);
-            if(empty($total_refund)) $total_refund = 0;
-            $amount_refunding = $this->input->post('amount', TRUE);
-            
-            $max_refundable = max(0, $total_paid - $total_refund);
-            
-            if ($amount_refunding > $max_refundable) {
-                $array = array('status' => 'fail', 'error' => array('amount' => $this->lang->line('amount_should_not_be_greater_than_balance') . ' ' . amountFormat($max_refundable)), 'message' => '');
-                echo json_encode($array);
-                return;
-            }
-
-            $bill_date       = $this->input->post("payment_date", TRUE);
-            $payment_section = $this->config->item('payment_section');
-            $payment_array   = array(
-                'amount'               => $amount_refunding,
-                'type'                 => 'refund',
-                'patient_id'           => $this->input->post('patient_id', TRUE),
-                'section'              => $payment_section['pathology'],
-                'pathology_billing_id' => $pathology_billing_id,
-                'payment_mode'         => $this->input->post('payment_mode', TRUE),
-                'note'                 => $this->input->post('note', TRUE),
-                'payment_date'         => $this->customlib->dateFormatToYYYYMMDDHis($bill_date, $this->customlib->getHospitalTimeFormat()),
-                'received_by'          => $this->customlib->getLoggedInUserID(),
-            );
-
-            if (!empty($this->input->post('case_reference_id', TRUE)) && $this->input->post('case_reference_id', TRUE) != "") {
-                $payment_array['case_reference_id'] = $this->input->post('case_reference_id', TRUE);
-            }
-
-            $this->transaction_model->add($payment_array);
-            
-            $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
-        }
-        echo json_encode($array);
-    }
 }

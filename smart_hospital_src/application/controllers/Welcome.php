@@ -17,21 +17,6 @@ class Welcome extends Front_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('cms_menuitems_model');
-        $this->load->model('cms_menu_model');
-        $this->load->model('cms_page_model');
-        $this->load->model('cms_program_model');
-        $this->load->model('complaint_model');
-        $this->load->model('customfield_model');
-        $this->load->model('frontcms_setting_model');
-        $this->load->model('language_model');
-        $this->load->model('notificationsetting_model');
-        $this->load->model('patient_model');
-        $this->load->model('setting_model');
-        $this->load->model('staff_model');
-        $this->load->model('user_model');
-        $this->load->model('visitors_model');
-
         $this->load->config('form-builder');
         $this->load->library(array('mailer', 'form_builder'));
         $this->load->library('captchalib');
@@ -285,8 +270,7 @@ class Welcome extends Front_Controller
         }
         $data['page_content_type'] = $page_content_type;
         //total rows count
-        $category_items = $this->cms_program_model->getByCategory($page_content_type);
-        $totalRec = !empty($category_items) && is_array($category_items) ? count($category_items) : 0;
+        $totalRec = count($this->cms_program_model->getByCategory($page_content_type));
         //pagination configuration
         $config['target']     = '#postList';
         $config['base_url']   = base_url() . 'welcome/ajaxPaginationData';
@@ -448,12 +432,7 @@ class Welcome extends Front_Controller
         list($doctor_id, $shift, $date, $global_shift) = explode(',', $params);
         $appointments                                  = $this->onlineappointment_model->getAppointments($doctor_id, $shift, $date);
         $time                                          = $this->customlib->getSlotByDoctorShift($doctor_id, $shift);
-        $array = array();
-        if(!empty($appointments)){
-            foreach($appointments as $appointment){
-                $array[] = date("H:i:s", strtotime($appointment->date));
-            }
-        }
+        $array                                         = array_column($appointments, 'time');
         if ($slot != '' && $doctor_id != '' && $shift != '' && $date != '') {
             if (count($time) > $slot) {
                 $shift_time = date("H:i:s", strtotime($time[$slot]));
@@ -1020,25 +999,13 @@ class Welcome extends Front_Controller
                             } else {
                                 $check_time_format = true;
                             }
-                            $session_data = array(
-                                'id'                  => $result[0]->id,
-                                'patient_id'          => $result[0]->patient_id,
-                                'role'                => $result[0]->role,
-                                'username'            => $result[0]->username,
-                                'date_format'         => $setting_result[0]['date_format'],
-                                'language'            => $lang_array,
-                                'timezone'            => $setting_result[0]['timezone'],
-                                'sch_name'            => $setting_result[0]['name'],
-                                'is_rtl'              => $lang_data['is_rtl'],
-                                'theme'               => $setting_result[0]['theme'],
-                                'image'               => $result[0]->image,
-                                'time_format'         => $time_format,
-                                'currency_symbol'     => $setting_result[0]['currency_symbol'],
-                                'custom_field_prefix' => $prefix_array,
-                                'short_name'          => $lang_data['short_code'],
-                            );
-                            $this->session->set_userdata('patient', $session_data);
-                            return true;
+                            $jsons = array(
+                                'incorrect_credentials' => "",
+                             );
+
+                            $json_array = array('status' => '2', 'error' => $jsons);
+                            echo json_encode($json_array);
+                            die;                     
                         }
                     } else {
                         $jsons = array(

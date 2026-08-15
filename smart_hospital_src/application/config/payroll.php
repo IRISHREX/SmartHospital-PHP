@@ -67,8 +67,7 @@ $config['payment_mode'] = array(
     'Cheque'                   => lang('cheque'),
     'transfer_to_bank_account' => lang('transfer_to_bank_account'),
     'UPI'                      => lang('upi'),
-    'Online'                   => lang('online'),
-    'Pay Later'                => 'Pay Later',
+    'Online'                    => lang('online'),
     'Other'                    => lang('other'),    
 );
 
@@ -103,8 +102,6 @@ $config['appointment_status'] = array(
     'pending'  => lang('pending'),
     'approved' => lang('approved'),
     'cancel'   => lang('cancel'),
-    'partially_refunded' => lang('partially_refunded'),
-    'full_refunded' => lang('full_refunded'),
 );
 
 $config['appointment_type'] = array(

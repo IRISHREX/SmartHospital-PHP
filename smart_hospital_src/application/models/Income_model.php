@@ -9,13 +9,6 @@ class Income_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-        try {
-            if (!$this->db->field_exists('refund', 'income')) {
-                $this->db->query("ALTER TABLE `income` ADD `refund` varchar(50) DEFAULT '0'");
-            }
-        } catch (Throwable $e) {
-            log_message('error', 'Income_model: Could not add refund column: ' . $e->getMessage());
-        }
     }
 
     /**
@@ -29,7 +22,7 @@ class Income_model extends MY_Model
         if (!empty($text)) {
             $this->db
                 ->select(
-                    "income.id,income.date,income.name,income.invoice_no,income.amount,income.refund,income.documents,income.note,income_head.income_category,income.inc_head_id",
+                    "income.id,income.date,income.name,income.invoice_no,income.amount,income.documents,income.note,income_head.income_category,income.inc_head_id",
                 )
                 ->from("income");
             $this->db->join(
@@ -42,7 +35,7 @@ class Income_model extends MY_Model
         } else {
             $this->db
                 ->select(
-                    "income.id,income.date,income.name,income.invoice_no,income.amount,income.refund,income.documents,income.note,income_head.income_category,income.inc_head_id",
+                    "income.id,income.date,income.name,income.invoice_no,income.amount,income.documents,income.note,income_head.income_category,income.inc_head_id",
                 )
                 ->from("income");
             $this->db->join(
@@ -60,7 +53,7 @@ class Income_model extends MY_Model
     {
         $this->db
             ->select(
-                "income.id,income.date,income.name,income.invoice_no,income.amount,income.refund,income.documents,income.note,income_head.income_category,income.inc_head_id",
+                "income.id,income.date,income.name,income.invoice_no,income.amount,income.documents,income.note,income_head.income_category,income.inc_head_id",
             )
             ->from("income");
         $this->db->join("income_head", "income.inc_head_id = income_head.id");
@@ -431,7 +424,7 @@ class Income_model extends MY_Model
 
         $this->datatables
             ->select(
-                "income.id,income.date,income.name,income.invoice_no,income.amount,income.refund,income.documents,income.note,income_head.income_category,income.inc_head_id,generated_by_staff.name as generated_byname,generated_by_staff.surname as generated_bysurname,generated_by_staff.employee_id as generated_byemployee_id" .
+                "income.id,income.date,income.name,income.invoice_no,income.amount,income.documents,income.note,income_head.income_category,income.inc_head_id,generated_by_staff.name as generated_byname,generated_by_staff.surname as generated_bysurname,generated_by_staff.employee_id as generated_byemployee_id" .
                     $field_variable,
             )
             ->searchable(
@@ -441,7 +434,7 @@ class Income_model extends MY_Model
             ->orderable(
                 "income.name,income.invoice_no,income.date,income.note,income_head.income_category,generated_by_staff.name" .
                     $custom_field_column .
-                    ",income.amount,income.refund,null",
+                    ",income.amount,null",
             )
             ->join("income_head", "income.inc_head_id = income_head.id")
             ->join(

@@ -10,8 +10,6 @@ class Itemstore extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('itemstore_model');
-
         $this->load->helper('file');
         $this->load->helper('url');
     }

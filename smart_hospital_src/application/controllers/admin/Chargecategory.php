@@ -12,9 +12,6 @@ class Chargecategory extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('chargetype_model');
-        $this->load->model('charge_category_model');
-
         $this->config->load("payroll");
         $this->load->library('datatables');
         $this->charge_type = $this->customlib->getChargeMaster();

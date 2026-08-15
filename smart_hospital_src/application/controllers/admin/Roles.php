@@ -12,8 +12,6 @@ class Roles extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('role_model');
-
         $this->load->config('mailsms');
         $this->perm_category = $this->config->item('perm_category');
     }
